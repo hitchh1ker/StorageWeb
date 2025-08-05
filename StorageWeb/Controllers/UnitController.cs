@@ -3,7 +3,7 @@ using StorageWeb.Repository.Unit.Models;
 
 namespace StorageWeb.Controllers
 {
-    [Route("/units")]
+    [Route("/units/{id}")]
     public class UnitController : Controller
     {
         private readonly UnitDataContext _unitDataContext;
@@ -12,10 +12,10 @@ namespace StorageWeb.Controllers
         {
             _unitDataContext = unitDataContext;
         }
-
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int id)
         {
-            var units = await _unitDataContext.GetAsync();
+            var units = await _unitDataContext.GetAsync(id);
             return View("Unit", units);
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StorageWeb.Repository.Receipt;
+using StorageWeb.Repository.Receipt.Models;
 
 namespace StorageWeb.Controllers
 {
@@ -15,8 +15,8 @@ namespace StorageWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var receipts = await _receiptDataContext.GetAsync();
-            return View();
+            var receipts = await _receiptDataContext.GetAsync();
+            return View("Receipt", receipts);
         }
     }
 }

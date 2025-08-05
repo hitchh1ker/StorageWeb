@@ -12,12 +12,12 @@ namespace StorageWeb.Repository.Resource.Models
         {
             ConnectionString = options.Value.StorageDb;
         }
-        public async Task<IEnumerable<Resource>> GetAsync()
+        public async Task<IEnumerable<Resource>> GetAsync(int id)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();
 
-            var units = await connection.QueryAsync<Resource>("SELECT id, name as Name, status as Status FROM resource where status = 1");
+            var units = await connection.QueryAsync<Resource>($"SELECT id, name as Name, status as Status FROM resource where status = {id}");
             return units;
         }
         public async Task InsertAsync()

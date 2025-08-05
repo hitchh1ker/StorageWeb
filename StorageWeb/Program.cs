@@ -1,5 +1,5 @@
 ﻿using StorageWeb.Repository;
-using StorageWeb.Repository.Receipt;
+using StorageWeb.Repository.Receipt.Models;
 using StorageWeb.Repository.Resource.Models;
 using StorageWeb.Repository.Unit.Models;
 
@@ -21,7 +21,7 @@ app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllers(); // ← обязательно!
+    endpoints.MapControllers();
 });
 
 app.Run();
