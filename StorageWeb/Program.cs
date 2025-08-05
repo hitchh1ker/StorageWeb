@@ -1,13 +1,11 @@
-using StorageWeb.Repository;
+﻿using StorageWeb.Repository;
 using StorageWeb.Repository.Receipt;
-using StorageWeb.Repository.Resource;
-using StorageWeb.Repository.Unit;
+using StorageWeb.Repository.Resource.Models;
+using StorageWeb.Repository.Unit.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<ReceiptDataContext>();
 
@@ -21,6 +19,9 @@ var app = builder.Build();
 
 app.UseRouting();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); // ← обязательно!
+});
 
 app.Run();

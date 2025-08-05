@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Dapper;
+using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace StorageWeb.Repository.Receipt
 {

@@ -1,11 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StorageWeb.Repository.Receipt;
 
 namespace StorageWeb.Controllers
 {
+    [Route("/receipts")]
     public class ReceiptController : Controller
     {
-        public IActionResult Index()
+        private readonly ReceiptDataContext _receiptDataContext;
+
+        public ReceiptController(ReceiptDataContext receiptDataContext)
         {
+            _receiptDataContext = receiptDataContext;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            //var receipts = await _receiptDataContext.GetAsync();
             return View();
         }
     }
