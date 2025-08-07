@@ -8,14 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ReceiptDataContext>();
-
 builder.Services.AddScoped<ResourceDataContext>();
-
 builder.Services.AddScoped<UnitDataContext>();
 
 builder.Services.Configure<ConnectionString>(builder.Configuration.GetSection("ConnectionString"));
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/receipts");
+        return;
+    }
+
+    await next();
+});
 
 app.UseRouting();
 

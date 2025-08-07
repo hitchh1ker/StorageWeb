@@ -1,0 +1,99 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Storage Web</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<style>
+    body {
+        display: flex;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #b02a37;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+    }
+
+    .sidebar h4 {
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .sidebar-section {
+        margin-bottom: 50px; /* отступ между блоками */
+    }
+
+    .sidebar-section h6 {
+        margin-bottom: 10px;
+        padding-left: 5px;
+    }
+
+    .sidebar-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px; /* отступы между ссылками */
+        padding-left: 10px; /* отступ внутри секции */
+    }
+
+    .sidebar a {
+        padding: 6px 12px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s, opacity 0.3s;
+        border-radius: 5px;
+    }
+
+    .sidebar a:hover {
+        opacity: 0.7;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 30px;
+        background-color: #f8f9fa;
+    }
+</style>
+</head>
+<body>
+    <div class="sidebar">
+    <div>
+        <h4>Управление складом</h4>
+
+        <div class="sidebar-section">
+            <h6>Документы</h6>
+            <div class="sidebar-links">
+                <a href="/receipts">Поступления</a>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h6>Справочники</h6>
+            <div class="sidebar-links">
+                <a href="/resources/1">Ресурсы</a>
+                <a href="/units/1">Единицы измерения</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>
