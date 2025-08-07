@@ -20,12 +20,12 @@ namespace StorageWeb.Repository.Unit.Models
             var units = await connection.QueryAsync<Unit>($"SELECT id, name as Name, status as Status FROM unit where status = {id}");
             return units;
         }
-        public async Task InsertAsync()
+        public async Task InsertAsync(Unit unit)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();
 
-            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO unit (name, status) VALUES (@name, @status)",new { }));
+            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO unit (name, status) VALUES (@name, @status)",new { name = unit.Name, status = 1 }));
         }
 
         public async Task DeleteAsync()

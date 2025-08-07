@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+	@using StorageWeb.Repository.Unit.Models
+}
+
+@model IEnumerable<Unit>
+
+<h2>Архив единиц измерения</h2>
+
+<a href="/units/1" class="btn">К активным</a>
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Название</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var unit in Model)
+        {
+            <tr>
+                <td>@unit.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        background-color: #b02a37;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #821f2b;
+    }
+</style>

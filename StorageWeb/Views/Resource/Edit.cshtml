@@ -1,0 +1,45 @@
+﻿@model StorageWeb.Repository.Resource.Models.Resource
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Редактировать ресурс</h2>
+
+<form method="post" asp-controller="Resource" asp-action="Update">
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div style="margin-bottom: 16px;">
+        <label for="Name">Наименование:</label><br />
+        <input type="text" id="Name" name="Name" value="@Model.Name" required style="padding: 8px; width: 300px;" />
+    </div>
+
+    <button type="submit" class="btn">Сохранить</button>
+</form>
+
+<form method="post" asp-controller="Resource" asp-action="Archive" style="display:inline;">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <button type="submit" class="btn">Добавить в архив</button>
+</form>
+
+<form method="post" asp-controller="Resource" asp-action="Delete" style="display:inline;" onsubmit="return confirm('Удалить ресурс?');">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <button type="submit" class="btn">Удалить</button>
+</form>
+
+<style>
+    .btn {
+        padding: 10px 20px;
+        margin: 10px 10px 0 0;
+        background-color: #b02a37;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #821f2b;
+    }
+</style>

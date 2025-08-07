@@ -1,13 +1,32 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-
-Layout = "~/Views/Shared/_Layout.cshtml";
-@using StorageWeb.Repository.Resource.Models
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @using StorageWeb.Repository.Resource.Models
+}
 @model IEnumerable<Resource>
 
+<style>
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #b02a37;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-right: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #821f2b;
+    }
+</style>
+
 <h2>Ресурсы</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="/resources/add" class="btn">Добавить</a>
+    <a href="/resources/2" class="btn">К архиву</a>
+</div>
 
 <table border="1" cellpadding="10">
     <thead>
@@ -18,10 +37,9 @@ Layout = "~/Views/Shared/_Layout.cshtml";
     <tbody>
         @foreach (var resource in Model)
         {
-            <tr>
+            <tr onclick="location.href='/resources/edit/@resource.Id'" style="cursor:pointer;">
                 <td>@resource.Name</td>
             </tr>
         }
     </tbody>
 </table>
-}
