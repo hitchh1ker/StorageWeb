@@ -40,33 +40,48 @@ namespace StorageWeb.Controllers
             await _resourceDataContext.InsertAsync(resource);
             return RedirectToAction("Index", new { id = 1 });
         }
+        [HttpPost("select")]
+        public async Task<IActionResult> Select(int id)
+        {
+            var resource = await _resourceDataContext.GetByIdAsync(id);
+            TempData["Id"] = resource.Id;
+            TempData["Name"] = resource.Name;
+            TempData["Status"] = resource.Status;
+            return RedirectToAction("Edit");
+        }
         [HttpGet("edit")]
         public IActionResult Edit()
         {
-            return View("Edit");
+            var resource = new Resource
+            {
+                Id = Convert.ToInt32(TempData["Id"]),
+                Name = TempData["Name"]?.ToString(),
+                Status = Convert.ToInt32(TempData["Status"])
+            };
+
+            return View("Edit", resource);
         }
-        [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(Resource resource)
+        [HttpPost("edit")]
+        public async Task<IActionResult> HandleEdit(Resource resource, string ActionType)
         {
             if (!ModelState.IsValid)
-                return View("Add", resource);
-            await _resourceDataContext.DeleteAsync(resource);
-            return RedirectToAction("Index", new { id = 1 });
-        }
-        [HttpPut("update")]
-        public async Task<IActionResult> Update(Resource resource)
-        {
-            if (!ModelState.IsValid)
-                return View("Add", resource);
-            await _resourceDataContext.UpdateAsync(resource);
-            return RedirectToAction("Index", new { id = 1 });
-        }
-        [HttpPut("inarchive")]
-        public async Task<IActionResult> InArchive(Resource resource)
-        {
-            if (!ModelState.IsValid)
-                return View("Add", resource);
-            await _resourceDataContext.UpdateStatusAsync(resource);
+                return View("Edit", resource);
+
+            switch (ActionType)
+            {
+                case "Update":
+                    await _resourceDataContext.UpdateAsync(resource);
+                    break;
+                case "Delete":
+                    await _resourceDataContext.DeleteAsync(resource);
+                    break;
+                case "Archive":
+                    await _resourceDataContext.UpdateStatusAsync(resource);
+                    break;
+                default:
+                    return View("Edit", resource);
+            }
+
             return RedirectToAction("Index", new { id = 1 });
         }
     }

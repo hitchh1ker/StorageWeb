@@ -12,20 +12,33 @@ namespace StorageWeb.Repository.Resource.Models
         {
             ConnectionString = options.Value.StorageDb;
         }
-        public async Task<IEnumerable<Resource>> GetAsync(int id)
+        public async Task<IEnumerable<Resource>> GetAsync(int status)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();
 
-            var units = await connection.QueryAsync<Resource>($"SELECT id, name as Name, status as Status FROM resource where status = {id}");
-            return units;
+            var sql = "SELECT id, name as Name, status as Status FROM resource where status = @Id";
+            var resources = await connection.QueryAsync<Resource>(sql, new { Id = status });
+
+            return resources;
         }
+        public async Task<Resource?> GetByIdAsync(int id)
+        {
+            using var connection = new NpgsqlConnection(ConnectionString);
+            connection.Open();
+
+            var sql = "SELECT id, name as Name, status as Status FROM resource WHERE id = @Id";
+            var resource = await connection.QueryFirstOrDefaultAsync<Resource>(sql, new { Id = id });
+
+            return resource;
+        }
+
         public async Task InsertAsync(Resource resource)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();
 
-            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO resource (name, status) VALUES (@name, @status)", new { name = resource.Name, status = resource.Status }));
+            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO resource (name, status) VALUES (@name, @status)", new { name = resource.Name, status = 1 }));
         }
 
         public async Task DeleteAsync(Resource resource)

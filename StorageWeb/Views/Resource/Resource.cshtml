@@ -37,8 +37,15 @@
     <tbody>
         @foreach (var resource in Model)
         {
-            <tr onclick="location.href='/resources/edit/@resource.Id'" style="cursor:pointer;">
-                <td>@resource.Name</td>
+            <tr>
+                <td>
+                    <form method="post" action="select" style="display:inline;cursor:pointer;">
+                        <input type="hidden" name="id" value="@resource.Id" />
+                        <input type="hidden" name="name" value="@resource.Name" />
+						<input type="hidden" name="status" value="@resource.Status" />
+                        <button type="submit" style="all: unset;">@resource.Name</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>

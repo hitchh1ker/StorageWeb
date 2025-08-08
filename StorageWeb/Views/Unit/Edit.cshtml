@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@model StorageWeb.Repository.Resource.Models.Resource
+@model StorageWeb.Repository.Unit.Models.Unit
 
 <style>
     .btn {
@@ -23,7 +23,7 @@
 
 <h2>Редактирование ресурса</h2>
 
-<form method="post" asp-controller="Resource">
+<form method="post" asp-controller="Unit">
     <input type="hidden" name="Id" value="@Model.Id" />
     <input type="hidden" name="Status" value="@Model.Status" />
     <input type="hidden" name="ActionType" id="ActionType" />

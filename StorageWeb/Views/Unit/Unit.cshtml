@@ -38,7 +38,14 @@
         @foreach (var unit in Model)
         {
             <tr>
-                <td>@unit.Name</td>
+                <td>
+                    <form method="post" action="select" style="display:inline;cursor:pointer;">
+                        <input type="hidden" name="id" value="@unit.Id" />
+                        <input type="hidden" name="name" value="@unit.Name" />
+				        <input type="hidden" name="status" value="@unit.Status" />
+                        <button type="submit" style="all: unset;">@unit.Name</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>
