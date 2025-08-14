@@ -54,7 +54,14 @@ namespace StorageWeb.Repository.Unit.Models
 
             await connection.ExecuteAsync(new CommandDefinition("UPDATE unit SET name = @name WHERE id = @id", new { id = unit.Id, name = unit.Name }));
         }
-        public async Task UpdateStatusAsync(Unit unit)
+        public async Task WorkStatusAsync(Unit unit)
+        {
+            using var connection = new NpgsqlConnection(ConnectionString);
+            connection.Open();
+
+            await connection.ExecuteAsync(new CommandDefinition("UPDATE unit SET status = @status WHERE id = @id", new { id = unit.Id, status = 1 }));
+        }
+        public async Task ArchiveStatusAsync(Unit unit)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();

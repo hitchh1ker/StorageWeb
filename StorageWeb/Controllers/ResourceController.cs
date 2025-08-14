@@ -76,7 +76,14 @@ namespace StorageWeb.Controllers
                     await _resourceDataContext.DeleteAsync(resource);
                     break;
                 case "Archive":
-                    await _resourceDataContext.UpdateStatusAsync(resource);
+                    if (resource.Status == 1)
+                    {
+                        await _resourceDataContext.ArchiveStatusAsync(resource);
+                    }
+                    else
+                    {
+                        await _resourceDataContext.WorkStatusAsync(resource);
+                    }
                     break;
                 default:
                     return View("Edit", resource);

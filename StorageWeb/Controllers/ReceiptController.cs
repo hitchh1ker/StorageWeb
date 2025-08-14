@@ -15,8 +15,17 @@ namespace StorageWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var receipts = await _receiptDataContext.GetAsync();
-            return View("Receipt", receipts);
+            var model = new ReceiptViewModel
+            {
+                Numbers = await _receiptDataContext.GetReceiptNumbersAsync(),
+                Resources = await _receiptDataContext.GetResourcesAsync(),
+                Units = await _receiptDataContext.GetUnitsAsync(),
+                FirstDate = await _receiptDataContext.GetEarliestDateAsync(),
+                LastDate = await _receiptDataContext.GetLatestDateAsync(),
+                Receipts = await _receiptDataContext.GetAsync()
+            };
+
+            return View("Receipt", model);
         }
     }
 }

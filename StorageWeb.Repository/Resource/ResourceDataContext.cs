@@ -56,7 +56,14 @@ namespace StorageWeb.Repository.Resource.Models
 
             await connection.ExecuteAsync(new CommandDefinition("UPDATE resource SET name = @name WHERE id = @id", new { id = resource.Id, name = resource.Name }));
         }
-        public async Task UpdateStatusAsync(Resource resource)
+        public async Task WorkStatusAsync(Resource resource)
+        {
+            using var connection = new NpgsqlConnection(ConnectionString);
+            connection.Open();
+
+            await connection.ExecuteAsync(new CommandDefinition("UPDATE resource SET status = @status WHERE id = @id", new { id = resource.Id, status = 1 }));
+        }
+        public async Task ArchiveStatusAsync(Resource resource)
         {
             using var connection = new NpgsqlConnection(ConnectionString);
             connection.Open();

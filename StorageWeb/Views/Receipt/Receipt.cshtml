@@ -1,31 +1,97 @@
 ﻿@{
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	@using StorageWeb.Repository.Receipt.Models
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @using StorageWeb.Repository.Receipt.Models
 }
-@model IEnumerable<Receipt>
+@model ReceiptViewModel
 
 <h2>Ресурсы</h2>
 
-<table border="1" cellpadding="10">
+<style>
+    table {
+        border-collapse: collapse;
+        width: 40%;
+        text-align: center;
+    }
+    td, th {
+        border: 1px solid black;
+        padding: 3px;
+    }
+    button {
+        margin-bottom: 20px;
+    }
+</style>
+
+<form method="get" style="display: flex; gap: 20px; align-items: flex-end; margin-bottom: 20px;">
+    <div>
+        <label>Период</label><br />
+        <input type="date" name="startDate" value="@Model.FirstDate?.ToString("yyyy-MM-dd")" style="padding: 5px;" />
+        <input type="date" name="endDate" value="@Model.LastDate?.ToString("yyyy-MM-dd")" style="padding: 5px;" />
+    </div>
+
+    <div>
+        <label>Номер поступления</label><br />
+        <select name="receiptNumber" style="padding: 5px; width: 200px;" title="Выберите">
+            @foreach (var number in Model.Numbers)
+            {
+                <option value="@number">@number</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Ресурс</label><br />
+        <select name="resource" style="padding: 5px; width: 200px;" title="Выберите">
+            @foreach (var resource in Model.Resources)
+            {
+                <option value="@resource">@resource</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Единица измерения</label><br />
+        <select name="unit" style="padding: 5px; width: 200px;" title="Выберите">
+            @foreach (var unit in Model.Units)
+            {
+                <option value="@unit">@unit</option>
+            }
+        </select>
+    </div>
+</form>
+
+<button type="submit" style="background-color: #b02a37; color: white; border: none; padding: 6px 12px; border-radius: 4px;">Применить</button>
+<button type="button" style="background-color: #b02a37; color: white; border: none; padding: 6px 12px; border-radius: 4px;">Добавить</button>
+
+
+<table>
     <thead>
         <tr>
             <th>Номер</th>
-			<th>Дата</th>
-			<th>Ресурс</th>
-			<th>Единица</th>
-			<th>Количество</th>
+            <th>Дата</th>
+            <th>Ресурс</th>
+            <th>Единица</th>
+            <th>Количество</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var receipt in Model)
+        @foreach (var group in Model.Receipts.GroupBy(r => new { r.Number, r.Date }))
         {
-            <tr>
-                <td>@receipt.Number</td>
-				<td>@receipt.Date</td>
-				<td>@receipt.ReceiptResource</td>
-				<td>@receipt.ResourceUnit</td>
-				<td>@receipt.Count</td>
-            </tr>
+            bool firstRow = true;
+            int rowCount = group.Count();
+            foreach (var receipt in group)
+            {
+                <tr>
+                    @if (firstRow)
+                    {
+                        <td rowspan="@rowCount">@receipt.Number</td>
+                        <td rowspan="@rowCount">@receipt.Date.ToString("dd.MM.yyyy")</td>
+                        firstRow = false;
+                    }
+                    <td>@receipt.ReceiptResource</td>
+                    <td>@receipt.ResourceUnit</td>
+                    <td>@receipt.Count</td>
+                </tr>
+            }
         }
     </tbody>
 </table>
