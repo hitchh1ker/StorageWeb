@@ -13,19 +13,79 @@ namespace StorageWeb.Controllers
             _receiptDataContext = receiptDataContext;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var model = new ReceiptViewModel
-            {
-                Numbers = await _receiptDataContext.GetReceiptNumbersAsync(),
-                Resources = await _receiptDataContext.GetResourcesAsync(),
-                Units = await _receiptDataContext.GetUnitsAsync(),
-                FirstDate = await _receiptDataContext.GetEarliestDateAsync(),
-                LastDate = await _receiptDataContext.GetLatestDateAsync(),
-                Receipts = await _receiptDataContext.GetAsync()
-            };
+		public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate, List<string> receiptNumber, List<string> resource, List<string> unit)
+		{
+			var receipts = await _receiptDataContext.GetAsync();
 
-            return View("Receipt", model);
-        }
-    }
+			if (startDate.HasValue)
+				receipts = receipts.Where(r => r.Date >= startDate.Value).ToList();
+
+			if (endDate.HasValue)
+				receipts = receipts.Where(r => r.Date <= endDate.Value).ToList();
+
+			if (receiptNumber?.Any() == true)
+				receipts = receipts.Where(r => receiptNumber.Contains(r.Number.ToString())).ToList();
+
+			if (resource?.Any() == true)
+				receipts = receipts.Where(r => resource.Contains(r.ReceiptResource)).ToList();
+
+			if (unit?.Any() == true)
+				receipts = receipts.Where(r => unit.Contains(r.ResourceUnit)).ToList();
+
+			var numbers = await _receiptDataContext.GetReceiptNumbersAsync();
+			var resources = await _receiptDataContext.GetResourcesAsync();
+			var units = await _receiptDataContext.GetUnitsAsync();
+			var firstDate = await _receiptDataContext.GetEarliestDateAsync();
+			var lastDate = await _receiptDataContext.GetLatestDateAsync();
+
+			var model = new ReceiptViewModel
+			{
+				Receipts = receipts,
+				Numbers = numbers,
+				Resources = resources,
+				Units = units,
+				FirstDate = firstDate,
+				LastDate = lastDate,
+
+				SelectedStartDate = startDate,
+				SelectedEndDate = endDate,
+				SelectedNumbers = receiptNumber ?? new List<string>(),
+				SelectedResources = resource ?? new List<string>(),
+				SelectedUnits = unit ?? new List<string>()
+			};
+
+			return View("Receipt", model);
+		}
+		[HttpGet("add")]
+		public async Task<IActionResult> Add()
+		{
+			var model = new ReceiptAddViewModel
+			{
+				Date = DateTime.Today,
+				ResourcesList = await _receiptDataContext.GetAllResourcesAsync(),
+				UnitsList = await _receiptDataContext.GetAllUnitsAsync(),
+			};
+			return View("Add", model);
+		}
+		[HttpPost("add")]
+		public async Task<IActionResult> Add(ReceiptAddViewModel model)
+		{
+			var receiptId = await _receiptDataContext.InsertReceiptAsync(new ReceiptAddViewModel
+			{
+				Number = model.Number,
+				Date = model.Date
+			});
+
+			var resources = model.Resources.Select(r => new ReceiptResource
+			{
+				ReceiptId = receiptId,
+				ResourceId = r.ResourceId,
+				UnitId = r.UnitId,
+				Count = r.Count
+			});
+
+			await _receiptDataContext.InsertReceiptResourcesAsync(resources);
+			return RedirectToAction("Index");
+		}
+	}
 }
