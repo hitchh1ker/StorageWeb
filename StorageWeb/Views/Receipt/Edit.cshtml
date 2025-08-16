@@ -1,2 +1,126 @@
 ﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model StorageWeb.Repository.Receipt.Models.ReceiptAddViewModel
+
+<h2>Редактировать поступление</h2>
+
+<form method="post">
+    <div style="margin-bottom: 15px;">
+        <label style="display:block; font-weight:bold; margin-bottom:5px;">Номер поступления</label>
+        <input type="number" name="Number" value="@Model.Number" required
+               style="width:200px; padding:6px 8px; border:1px solid #ccc; border-radius:5px; transition: border-color 0.3s;"
+               onfocus="this.style.borderColor='#198754'" onblur="this.style.borderColor='#ccc'" />
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label style="display:block; font-weight:bold; margin-bottom:5px;">Дата</label>
+        <input type="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" required
+               style="width:200px; padding:6px 8px; border:1px solid #ccc; border-radius:5px; transition: border-color 0.3s;"
+               onfocus="this.style.borderColor='#198754'" onblur="this.style.borderColor='#ccc'" />
+    </div>
+
+    <h3>Ресурсы</h3>
+    <table style="width:100%; border-collapse: collapse; border:1px solid #ccc; margin-bottom: 20px;">
+        <thead style="background-color:#b02a37; color:white;">
+            <tr>
+                <th style="width:50px; height:50px; text-align:center;">
+                    <button type="button" onclick="addResourceRow()"
+                            style="background-color:#198754; color:white; border:none; border-radius:4px; padding:4px 8px; cursor:pointer;">
+                        +
+                    </button>
+                </th>
+                <th style="padding:8px;">Ресурс</th>
+                <th style="padding:8px;">Единица</th>
+                <th style="padding:8px;">Количество</th>
+            </tr>
+        </thead>
+        <tbody id="resourcesTable">
+            @for (var i = 0; i < Model.Resources.Count; i++)
+            {
+                <tr style="border-bottom:1px solid #ccc;">
+                    <td style="width:50px; height:50px; text-align:center;">
+                        <button type="button" onclick="deleteResourceRow(this)" 
+                                style="background-color:red; color:white; border:none; border-radius:4px; padding:4px 8px; cursor:pointer;">-</button>
+                    </td>
+                    <td style="padding:6px;">
+                        <select name="Resources[@i].ResourceId" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;">
+                            @foreach (var res in Model.ResourcesList)
+                            {
+                                <option value="@res.Id" @(Model.Resources[i].ResourceId == res.Id ? "selected" : "")>@res.Name</option>
+                            }
+                        </select>
+                    </td>
+                    <td style="padding:6px;">
+                        <select name="Resources[@i].UnitId" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;">
+                            @foreach (var unit in Model.UnitsList)
+                            {
+                                <option value="@unit.Id" @(Model.Resources[i].UnitId == unit.Id ? "selected" : "")>@unit.Name</option>
+                            }
+                        </select>
+                    </td>
+                    <td style="padding:6px;">
+                        <input type="number" name="Resources[@i].Count" value="@Model.Resources[i].Count" min="0" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" formaction="/receipts/edit" class="btn btn-success">
+        Сохранить
+    </button>
+
+    <button type="submit" formaction="/receipts/delete" 
+            class="btn btn-danger"
+            onclick="return confirm('Удалить поступление?');">
+        Удалить
+    </button>
+</form>
+
+<script>
+    let resourceIndex = @Model.Resources.Count;
+
+    function addResourceRow() {
+        const table = document.getElementById('resourcesTable');
+        const row = document.createElement('tr');
+        row.style.borderBottom = "1px solid #ccc";
+        row.innerHTML = `
+            <td style="width:50px; height:50px; text-align:center;">
+                <button type="button" onclick="deleteResourceRow(this)" 
+                        style="background-color:red; color:white; border:none; border-radius:4px; padding:4px 8px; cursor:pointer;">-</button>
+            </td>    
+            <td style="padding:6px;">
+                <select name="Resources[${resourceIndex}].ResourceId" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;">
+                    ${`@Html.Raw(string.Join("", Model.ResourcesList.Select(res => $"<option value='{res.Id}'>{res.Name}</option>")))`}
+                </select>
+            </td>
+            <td style="padding:6px;">
+                <select name="Resources[${resourceIndex}].UnitId" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;">
+                    ${`@Html.Raw(string.Join("", Model.UnitsList.Select(unit => $"<option value='{unit.Id}'>{unit.Name}</option>")))`}
+                </select>
+            </td>
+            <td style="padding:6px;">
+                <input type="number" name="Resources[${resourceIndex}].Count" min="0" required style="width:100%; padding:6px; border:1px solid #ccc; border-radius:5px;" />
+            </td>
+        `;
+        table.appendChild(row);
+        resourceIndex++;
+    }
+
+    function deleteResourceRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+        const rows = document.querySelectorAll('#resourcesTable tr');
+        rows.forEach((r, index) => {
+            const selects = r.querySelectorAll('select, input');
+            selects.forEach(el => {
+                if (el.name.includes('Resources[')) {
+                    const fieldName = el.name.split(']')[1];
+                    el.name = `Resources[${index}]${fieldName}`;
+                }
+            });
+        });
+        resourceIndex = rows.length;
+    }
+</script>

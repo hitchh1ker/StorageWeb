@@ -87,5 +87,71 @@ namespace StorageWeb.Controllers
 			await _receiptDataContext.InsertReceiptResourcesAsync(resources);
 			return RedirectToAction("Index");
 		}
-	}
+        [HttpPost("SetCurrentReceipt")]
+        public IActionResult SetCurrentReceipt(int id)
+        {
+            TempData["CurrentReceiptId"] = id;
+            TempData.Keep("CurrentReceiptId");
+            return Ok();
+        }
+
+        [HttpGet("edit")]
+        public async Task<IActionResult> Edit()
+        {
+            if (TempData["CurrentReceiptId"] == null)
+                return RedirectToAction("Index");
+
+            int id = (int)TempData["CurrentReceiptId"];
+
+            var receipt = await _receiptDataContext.GetByIdAsync(id);
+            var resources = await _receiptDataContext.GetResourcesByReceiptIdAsync(id);
+            var resourcesList = await _receiptDataContext.GetAllResourcesAsync();
+            var unitsList = await _receiptDataContext.GetAllUnitsAsync();
+
+            var model = new ReceiptAddViewModel
+            {
+                Number = receipt.Number,
+                Date = receipt.Date,
+                Resources = resources.ToList(),
+                ResourcesList = resourcesList,
+                UnitsList = unitsList
+            };
+
+            TempData.Keep("CurrentReceiptId");
+            return View(model); // передаём в Edit.cshtml
+        }
+
+        [HttpPost("edit")]
+        public async Task<IActionResult> Edit(ReceiptAddViewModel model)
+        {
+            if (TempData["CurrentReceiptId"] == null)
+                return RedirectToAction("Index");
+
+            int id = (int)TempData["CurrentReceiptId"];
+
+            await _receiptDataContext.UpdateReceiptAsync(id, model.Number, model.Date, model.Resources);
+
+            TempData.Remove("CurrentReceiptId");
+            return RedirectToAction("Index");
+        }
+        [HttpPost("delete")]
+        public async Task<IActionResult> Delete()
+        {
+            if (TempData["CurrentReceiptId"] == null)
+                return RedirectToAction("Index");
+
+            int id = (int)TempData["CurrentReceiptId"];
+
+            try
+            {
+                await _receiptDataContext.DeleteReceiptAsync(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Ошибка при удалении поступления");
+            }
+        }
+    }
 }

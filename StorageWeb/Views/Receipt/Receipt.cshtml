@@ -82,26 +82,26 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var group in Model.Receipts.GroupBy(r => new { r.Number, r.Date }))
+    @foreach (var group in Model.Receipts.GroupBy(r => r.Number)) // Группируем только по Number
+    {
+        bool firstRow = true;
+        int rowCount = group.Count();
+        foreach (var receipt in group)
         {
-            bool firstRow = true;
-            int rowCount = group.Count();
-            foreach (var receipt in group)
-            {
-                <tr>
-                    @if (firstRow)
-                    {
-                        <td rowspan="@rowCount">@receipt.Number</td>
-                        <td rowspan="@rowCount">@receipt.Date.ToString("dd.MM.yyyy")</td>
-                        firstRow = false;
-                    }
-                    <td>@receipt.ReceiptResource</td>
-                    <td>@receipt.ResourceUnit</td>
-                    <td>@receipt.Count</td>
-                </tr>
-            }
+            <tr @if(firstRow) { <text>data-id="@receipt.Id" class="clickable-row"</text> }>
+                @if (firstRow)
+                {
+                    <td rowspan="@rowCount">@receipt.Number</td>
+                    <td rowspan="@rowCount">@receipt.Date.ToString("dd.MM.yyyy")</td>
+                    firstRow = false;
+                }
+                <td>@receipt.ReceiptResource</td>
+                <td>@receipt.ResourceUnit</td>
+                <td>@receipt.Count</td>
+            </tr>
         }
-    </tbody>
+    }
+</tbody>
 </table>
 
 <script>
@@ -111,4 +111,18 @@
             allowClear: true
         });
     });
+	$(document).ready(function () {
+    $('.clickable-row').css('cursor', 'pointer').on('click', function() {
+        const id = $(this).data('id');
+
+        $.post('/receipts/SetCurrentReceipt', { id: id })
+            .done(function() {
+                // Переходим на страницу редактирования
+                window.location.href = '/receipts/edit';
+            })
+            .fail(function() {
+                alert('Ошибка при установке текущего поступления');
+            });
+    });
+});
 </script>
