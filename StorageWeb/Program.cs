@@ -13,6 +13,12 @@ builder.Services.AddScoped<UnitDataContext>();
 
 builder.Services.Configure<ConnectionString>(builder.Configuration.GetSection("ConnectionString"));
 
+var connectionString = builder.Configuration.GetSection("ConnectionString").Get<ConnectionString>().StorageDb;
+
+await DatabaseInitializer.EnsureDatabaseExistsAsync(connectionString, "StorageDb");
+
+await DatabaseInitializer.EnsureTablesExistAsync(connectionString);
+
 var app = builder.Build();
 
 app.Use(async (context, next) =>
